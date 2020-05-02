@@ -52,16 +52,16 @@ namespace E7_Gear_Optimizer
             (bool, int, int) results;
             if (web)
             {
-                results = await Task.Run(() => data.importFromWeb(fileName, progress, append));
+                results = await Task.Run(() => data.ImportFromWeb(fileName, progress, append));
             }
             else if (folder)
             {
-                await Task.Run(() => data.importFromOCR(fileName, progress));
-                results = await Task.Run(() => data.importFromWeb("OCR/endure.json", progress, append));
+                await Task.Run(() => data.ImportFromOCR(fileName, progress));
+                results = await Task.Run(() => data.ImportFromWeb("OCR/endure.json", progress, append));
             }
             else
             {
-                results = await Task.Run(() => data.importFromThis(fileName, progress, append));
+                results = await Task.Run(() => data.ImportFromThis(fileName, progress, append));
             }
             result = results.Item1;
             HeroesImported = results.Item2;

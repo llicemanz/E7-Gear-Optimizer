@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace E7_Gear_Optimizer
+﻿namespace E7_Gear_Optimizer
 {
     public struct Stat
     {
-        private Stats name;
         private float value;
 
         public Stat(Stats name, float value)
         {
-            this.name = name;
+            Name = name;
             this.value = name != Stats.ATK && name != Stats.DEF && name != Stats.HP && name != Stats.SPD && value >= 1 ? value / 100 : value;
         }
 
-        public Stats Name { get => name; set => name = value; }
+        public Stats Name { get; set; }
         public float Value
         {
             get => value;

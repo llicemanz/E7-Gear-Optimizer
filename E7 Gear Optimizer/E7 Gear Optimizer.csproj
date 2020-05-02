@@ -127,11 +127,11 @@
     </Compile>
     <Compile Include="Skill.cs" />
     <Compile Include="SStats.cs" />
-    <Compile Include="updated.cs">
+    <Compile Include="Updated.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="updated.Designer.cs">
-      <DependentUpon>updated.cs</DependentUpon>
+    <Compile Include="Updated.Designer.cs">
+      <DependentUpon>Updated.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="Main.cs">
@@ -174,8 +174,8 @@
     <EmbeddedResource Include="SelectItemDialog.resx">
       <DependentUpon>SelectItemDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="updated.resx">
-      <DependentUpon>updated.cs</DependentUpon>
+    <EmbeddedResource Include="Updated.resx">
+      <DependentUpon>Updated.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="OCR\endure.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

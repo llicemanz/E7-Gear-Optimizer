@@ -94,17 +94,10 @@ def char_filter(val):
 
 
 # Format for optimizer
-export = {"processVersion": "1", "heroes": [
-    {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Angelica 1", "level": 60, "awakened": 5,
-     "baseHeroId": "angelica", "equipment": {}, "id": "jtm1cdd3"},
-    {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Baal & Sezan 1", "level": 60,
-     "awakened": 5, "baseHeroId": "baalsezan", "equipment": {}, "id": "jtm1ctbp"},
-    {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Zeno 1", "level": 60, "awakened": 4,
-     "baseHeroId": "zeno", "equipment": {}, "id": "jtm1ebse"},
-    {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Sigret 1", "level": 60, "awakened": 4,
-     "baseHeroId": "sigret", "equipment": {}, "id": "jtm1fodz"},
-    {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Schuri 1", "level": 50, "awakened": 4,
-     "baseHeroId": "schuri", "equipment": {}, "id": "jtx9kicn"}], "items": []}
+#export = {"processVersion": "1", "heroes": [ {"devotion": "", "artifactStats": {"atk": 0, "hp": 0}, "count": 1, "name": "Angelica 1", "level": 60, "awakened": 5,
+#     "baseHeroId": "angelica", "equipment": {}, "id": "jtm1cdd3"}], "items": []}
+
+export = {"processVersion": "1", "heroes": [], "items": []}
 
 
 # filenames = ["screenshots/Screenshot_20190327-090940.jpg"]

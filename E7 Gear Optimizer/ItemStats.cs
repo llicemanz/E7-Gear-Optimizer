@@ -26,7 +26,7 @@ namespace E7_Gear_Optimizer
         /// <summary>
         /// Array of Labels for substats names and values, to use instead of Controls.Find()
         /// </summary>
-        private (Label, Label)[] substatsLabels;
+        private readonly (Label, Label)[] substatsLabels;
 
         /// <summary>
         /// Gets or sets the Hero against whom flat stats' percent values will be calculated
@@ -49,14 +49,14 @@ namespace E7_Gear_Optimizer
                     l_ItemIlvl.Text = item.ILvl.ToString();
                     l_ItemEnhance.Text = "+" + item.Enhance.ToString();
                     l_ItemMain.Text = Util.statStrings[item.Main.Name];
-                    l_ItemMainStat.Text = getStatValueString(item.Main);
+                    l_ItemMainStat.Text = GetStatValueString(item.Main);
                     l_ItemSet.Text = item.Set.ToString().Replace("Crit", "Critical").Replace("Def", "Defense") + " Set";
                     for (int i = 0; i < 4; i++)
                     {
                         if (i < item.SubStats.Length)
                         {
                             substatsLabels[i].Item1.Text = Util.statStrings[item.SubStats[i].Name];
-                            substatsLabels[i].Item2.Text = getStatValueString(item.SubStats[i]);
+                            substatsLabels[i].Item2.Text = GetStatValueString(item.SubStats[i]);
                         }
                         else
                         {
@@ -91,28 +91,28 @@ namespace E7_Gear_Optimizer
             }
         }
 
-        private string getStatValueString(Stat stat)
+        private string GetStatValueString(Stat stat)
         {
-            string s;
+            string statValue ;
             if (Util.percentStats.Contains(stat.Name))
             {
-                s = stat.Value.ToString("P0", CultureInfo.CreateSpecificCulture("en-US"));
+                statValue = stat.Value.ToString("P0", CultureInfo.CreateSpecificCulture("en-US"));
             }
             else if ((item.Equipped == null && Hero == null) || stat.Name == Stats.SPD)
             {
-                s = stat.Value.ToString();
+                statValue = stat.Value.ToString();
             }
             else
             {
 
                 float awakenedStat = (Hero ?? item.Equipped).BaseStats[stat.Name] + ((Hero ?? item.Equipped).AwakeningStats.ContainsKey(stat.Name) ? (Hero ?? item.Equipped).AwakeningStats[stat.Name] : 0.0f);
-                if ((Util.correspondingStats.ContainsKey(stat.Name) && (Hero ?? item.Equipped).AwakeningStats.ContainsKey(Util.correspondingStats[stat.Name])))
+                if (Util.correspondingStats.ContainsKey(stat.Name) && (Hero ?? item.Equipped).AwakeningStats.ContainsKey(Util.correspondingStats[stat.Name]))
                 {
                     awakenedStat *= 1 + (Hero ?? item.Equipped).AwakeningStats[Util.correspondingStats[stat.Name]];
                 }
-                s = stat.Value.ToString() + " (" + (stat.Value / awakenedStat).ToString("P0", CultureInfo.CreateSpecificCulture("en-US")) + ')';
+                statValue = stat.Value.ToString() + " (" + (stat.Value / awakenedStat).ToString("P0", CultureInfo.CreateSpecificCulture("en-US")) + ')';
             }
-            return s;
+            return statValue;
         }
 
         /// <summary>
@@ -121,10 +121,7 @@ namespace E7_Gear_Optimizer
         public Image Image
         {
             get => image;
-            set
-            {
-                pb_Image.Image = image = value;
-            }
+            set => pb_Image.Image = image = value;
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -100,7 +99,7 @@ namespace E7_Gear_Optimizer
         public static Bitmap error = Properties.Resources.error;
         public static Bitmap star = Properties.Resources.star;
         public static Bitmap star_j = Properties.Resources.star_j;
-        public static WebClient client = createClient();
+        public static WebClient client = CreateClient();
         public static List<string> percentageColumns = new List<string>() {"c_Ilvl", "c_Enhance", "c_Value", "c_ATKPer", "c_ATK", "c_SPD", "c_CHC", "c_CHD", "c_HPPer", "c_HP", "c_DEFPer", "c_DEF", "c_EFF", "c_RES", "c_WSS" };
         public static Dictionary<ItemType, List<Stats>> rollableStats = new Dictionary<ItemType, List<Stats>>()
         {
@@ -114,21 +113,23 @@ namespace E7_Gear_Optimizer
         //Cached value of Set enum length to use in arrays' initializations instead of magic number
         public static readonly int SETS_LENGTH = Enum.GetValues(typeof(Set)).Length;
 
-        private static WebClient createClient()
+        private static WebClient CreateClient()
         {
-            WebClient c = new WebClient();
-            c.Encoding = Encoding.UTF8;
+            WebClient c = new WebClient
+            {
+                Encoding = Encoding.UTF8
+            };
             return c;
         }
 
         public static Bitmap ResizeImage(Image image, int width, int height)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            Rectangle destRect = new Rectangle(0, 0, width, height);
+            Bitmap destImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -136,7 +137,7 @@ namespace E7_Gear_Optimizer
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                using (var wrapMode = new ImageAttributes())
+                using (ImageAttributes wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
@@ -206,17 +207,17 @@ namespace E7_Gear_Optimizer
         }
 
         //Calculate the active Sets in a given gear combination
-        public static List<Set> activeSet(IEnumerable<Item> gear)
+        public static List<Set> ActiveSet(IEnumerable<Item> gear)
         {
             Dictionary<Set, int> setCounter = new Dictionary<Set, int>(6);
             foreach (Item item in gear)
             {
-                updateSetCounter(setCounter, item);
+                UpdateSetCounter(setCounter, item);
             }
-            return activeSet(setCounter);
+            return ActiveSet(setCounter);
         }
 
-        public static void updateSetCounter(Dictionary<Set, int> setCounter, Item item)
+        public static void UpdateSetCounter(Dictionary<Set, int> setCounter, Item item)
         {
             if (setCounter.ContainsKey(item.Set))
             {
@@ -228,10 +229,10 @@ namespace E7_Gear_Optimizer
             }
         }
 
-        public static List<Set> activeSet(Dictionary<Set, int> setCounter)
+        public static List<Set> ActiveSet(Dictionary<Set, int> setCounter)
         {
             List<Set> activeSets = new List<Set>(3);
-            foreach (var setCount in setCounter)
+            foreach (KeyValuePair<Set, int> setCount in setCounter)
             {
                 bool isFourPieceSet = isFourPieceSetArray[(int)setCount.Key];
                 if (isFourPieceSet && setCount.Value / 4 > 0)
@@ -249,7 +250,7 @@ namespace E7_Gear_Optimizer
             return activeSets;
         }
 
-        public static List<Set> activeSet(int[] setCounter)
+        public static List<Set> ActiveSet(int[] setCounter)
         {
             List<Set> activeSets = new List<Set>();
             for (int iSet = 0; iSet < setCounter.Length; iSet++)
@@ -274,10 +275,10 @@ namespace E7_Gear_Optimizer
             return activeSets;
         }
 
-        public static int setSlots(List<Set> activeSets)
+        public static int SetSlots(List<Set> activeSets)
         {
             int setSlots = 0;
-            foreach(Set s in activeSets)
+            foreach (Set s in activeSets)
             {
                 if (Util.fourPieceSets.Contains(s))
                 {
@@ -291,7 +292,7 @@ namespace E7_Gear_Optimizer
             return setSlots;
         }
 
-        public static string toAPIUrl(string str)
+        public static string ToAPIUrl(string str)
         {
             return str.ToLower().Replace('&', ' ').Replace("   ", " ").Replace(' ', '-');
         }

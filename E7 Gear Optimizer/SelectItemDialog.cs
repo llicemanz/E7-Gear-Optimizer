@@ -13,7 +13,7 @@ namespace E7_Gear_Optimizer
 {
     public partial class SelectItemDialog : Form
     {
-        List<Item> items;
+        private readonly List<Item> items;
 
         public SelectItemDialog()
         {
@@ -38,21 +38,21 @@ namespace E7_Gear_Optimizer
             e.Handled = true;
         }
 
-        public Item getSelectedItem()
+        public Item GetSelectedItem()
         {
             return items.Find(x => x.ID == (string)dgv_Inventory.Rows[dgv_Inventory.SelectedCells[0].RowIndex].Cells["C_ItemID"].Value);
         }
 
         private void SelectItemDialog_Shown(object sender, EventArgs e)
         {
-            _redrawDgv();
+            RedrawDgv();
         }
 
-        private void _redrawDgv()
+        private void RedrawDgv()
         {
             // Store previous sorting options
-            var sortedColumn = dgv_Inventory.SortedColumn;
-            var sortOrder = dgv_Inventory.SortOrder;
+            DataGridViewColumn sortedColumn = dgv_Inventory.SortedColumn;
+            SortOrder sortOrder = dgv_Inventory.SortOrder;
             dgv_Inventory.Rows.Clear();
             foreach (Item item in items)
             {
@@ -104,10 +104,8 @@ namespace E7_Gear_Optimizer
         {
             if (Util.percentageColumns.Contains(e.Column.Name))
             {
-                int cell1 = 0;
-                int cell2 = 0;
-                int.TryParse(e.CellValue1.ToString().Replace("%", "").Replace("+", ""), out cell1);
-                int.TryParse(e.CellValue2.ToString().Replace("%", "").Replace("+", ""), out cell2);
+                int.TryParse(e.CellValue1.ToString().Replace("%", "").Replace("+", ""), out int cell1);
+                int.TryParse(e.CellValue2.ToString().Replace("%", "").Replace("+", ""), out int cell2);
                 e.SortResult = cell1.CompareTo(cell2);
                 e.Handled = true;
             }
@@ -154,7 +152,7 @@ namespace E7_Gear_Optimizer
 
         private void Cb_ShowEquippedItems_CheckedChanged(object sender, EventArgs e)
         {
-            _redrawDgv();
+            RedrawDgv();
         }
     }
 }
