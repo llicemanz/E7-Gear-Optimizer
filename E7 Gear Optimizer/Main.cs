@@ -936,7 +936,7 @@ namespace E7_Gear_Optimizer
             {
                 locked = true;
             }
-            Item newItem = new Item(data.incrementItemID(), type, set, grade, ilvl, enh, main, substats.ToArray(), hero, locked);
+            Item newItem = new Item(data.IncrementItemID(), type, set, grade, ilvl, enh, main, substats.ToArray(), hero, locked);
             hero?.equip(newItem);
             data.Items.Add(newItem);
 
@@ -1000,7 +1000,7 @@ namespace E7_Gear_Optimizer
 
                 item.ILvl = (int)nud_ILvl.Value;
                 item.Enhance = (int)nud_Enhance.Value;
-                item.calcWSS();
+                item.CalcWSS();
 
                 Hero newHero = data.Heroes.Find(x => x.Name == String.Join(" ", cb_Eq.Text.Split(' ').Reverse().Skip(1).Reverse()));
                 if (newHero != item.Equipped)
@@ -1063,7 +1063,7 @@ namespace E7_Gear_Optimizer
                 if (cb_Hero.Text != hero.Name)
                 {
                     Item artifact = new Item("", ItemType.Artifact, Set.Attack, Grade.Epic, 0, 0, new Stat(), new Stat[] { new Stat(Stats.ATK, (float)nud_ArtifactAttack.Value), new Stat(Stats.HP, (float)nud_ArtifactHealth.Value) }, null, false);
-                    Hero newHero = new Hero(data.incrementHeroID(), cb_Hero.Text, new List<Item>(), artifact, int.Parse(cb_HeroLvl.Text), int.Parse(cb_HeroAwakening.Text));
+                    Hero newHero = new Hero(data.IncrementHeroID(), cb_Hero.Text, new List<Item>(), artifact, int.Parse(cb_HeroLvl.Text), int.Parse(cb_HeroAwakening.Text));
                     List<Item> eq = hero.getGear();
                     hero.unequipAll();
                     newHero.equip(eq);
@@ -1129,7 +1129,7 @@ namespace E7_Gear_Optimizer
             {
                 //Artifacts only consist of an ATK and a HP stat for the purpose of hero stat calculation. So the ID, type, set etc. is irrelevant
                 Item artifact = new Item("", ItemType.Artifact, Set.Attack, Grade.Epic, 0, 0, new Stat(), new Stat[] { new Stat(Stats.ATK, (float)nud_ArtifactAttack.Value), new Stat(Stats.HP, (float)nud_ArtifactHealth.Value) }, null, false);
-                Hero newHero = new Hero(data.incrementHeroID(), cb_Hero.Text, new List<Item>(), artifact, int.Parse(cb_HeroLvl.Text), int.Parse(cb_HeroAwakening.Text));
+                Hero newHero = new Hero(data.IncrementHeroID(), cb_Hero.Text, new List<Item>(), artifact, int.Parse(cb_HeroLvl.Text), int.Parse(cb_HeroAwakening.Text));
                 data.Heroes.Add(newHero);
                 updateHeroList();
                 dgv_Heroes.CurrentCell = dgv_Heroes.Rows[dgv_Heroes.Rows.Count - 1].Cells[0];
@@ -1166,7 +1166,7 @@ namespace E7_Gear_Optimizer
             SelectItemDialog dialog = new SelectItemDialog(list);
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                Item newItem = dialog.getSelectedItem();
+                Item newItem = dialog.GetSelectedItem();
                 Hero hero = data.Heroes.Find(x => x.ID == (string)dgv_Heroes["c_HeroID", dgv_Heroes.SelectedCells[0].RowIndex].Value);
                 if (newItem != null)
                 {
@@ -1467,7 +1467,7 @@ namespace E7_Gear_Optimizer
         private bool checkSets(Item item, List<Set> setFocus, Boolean reversed)
         {
             bool pass = true;
-            int slots = Util.setSlots(setFocus);
+            int slots = Util.SetSlots(setFocus);
             if (slots == 6)
             {
                 pass = setFocus.Contains(item.Set);
@@ -1695,7 +1695,7 @@ namespace E7_Gear_Optimizer
                         currentStats.Add(b.AllStats);
                         setCounter[(int)b.Set]++;
 
-                        List<Set> activeSets = Util.activeSet(setCounter);
+                        List<Set> activeSets = Util.ActiveSet(setCounter);
 
                         bool valid = true;
                         foreach (Set s in setFocus)
@@ -1704,7 +1704,7 @@ namespace E7_Gear_Optimizer
                         }
                         if (!brokenSets)
                         {
-                            valid = valid && (Util.setSlots(activeSets) == 6);
+                            valid = valid && (Util.SetSlots(activeSets) == 6);
                         }
                         if (valid)
                         {
@@ -1797,7 +1797,7 @@ namespace E7_Gear_Optimizer
                     break;
                 case 9:
                     int count = 0;
-                    activeSets = Util.activeSet(combinations[iCombination].Item1);
+                    activeSets = Util.ActiveSet(combinations[iCombination].Item1);
                     if (activeSets.Contains(Set.Unity))
                     {
                         foreach (Set set in activeSets)
@@ -1808,7 +1808,7 @@ namespace E7_Gear_Optimizer
                     e.Value = (5 + (count * 4)) + "%";
                     break;
                 case 10:
-                    activeSets = Util.activeSet(combinations[iCombination].Item1);
+                    activeSets = Util.ActiveSet(combinations[iCombination].Item1);
                     if (activeSets.Count > 0)
                     {
                         Bitmap sets = new Bitmap(activeSets.Count * 25, 25, PixelFormat.Format32bppArgb);
@@ -2237,10 +2237,8 @@ namespace E7_Gear_Optimizer
         {
             if (Util.percentageColumns.Contains(e.Column.Name))
             {
-                int cell1 = 0;
-                int cell2 = 0;
-                int.TryParse(e.CellValue1.ToString().Replace("%","").Replace("+", ""), out cell1);
-                int.TryParse(e.CellValue2.ToString().Replace("%", "").Replace("+", ""), out cell2);
+                int.TryParse(e.CellValue1.ToString().Replace("%", "").Replace("+", ""), out int cell1);
+                int.TryParse(e.CellValue2.ToString().Replace("%", "").Replace("+", ""), out int cell2);
                 e.SortResult = cell1.CompareTo(cell2);
                 e.Handled = true;
             }
@@ -2253,32 +2251,24 @@ namespace E7_Gear_Optimizer
             }
             else if (e.Column.Name == "c_Grade")
             {
-                string cell1 = e.CellValue1.ToString();
-                string cell2 = e.CellValue2.ToString();
+                var cell1 = e.CellValue1.ToString();
+                var cell2 = e.CellValue2.ToString();
                 switch (cell1)
                 {
                     case "Epic":
-                        if (cell2 != "Epic") e.SortResult = -1;
-                        else e.SortResult = 0;
+                        e.SortResult = cell2 != "Epic" ? -1 : 0;
                         break;
                     case "Heroic":
-                        if (cell2 == "Epic") e.SortResult = 1;
-                        else if (cell2 == "Heroic") e.SortResult = 0;
-                        else e.SortResult = -1;
+                        e.SortResult = cell2 == "Epic" ? 1 : cell2 == "Heroic" ? 0 : -1;
                         break;
                     case "Rare":
-                        if (cell2 == "Epic" || cell2 == "Heroic") e.SortResult = 1;
-                        else if (cell2 == "Rare") e.SortResult = 0;
-                        else e.SortResult = -1;
+                        e.SortResult = cell2 == "Epic" || cell2 == "Heroic" ? 1 : cell2 == "Rare" ? 0 : -1;
                         break;
                     case "Good":
-                        if (cell2 == "Normal") e.SortResult = -1;
-                        else if (cell2 == "Good") e.SortResult = 0;
-                        else e.SortResult = 1;
+                        e.SortResult = cell2 == "Normal" ? -1 : cell2 == "Good" ? 0 : 1;
                         break;
                     case "Normal":
-                        if (cell2 != "Normal") e.SortResult = 1;
-                        else e.SortResult = 0;
+                        e.SortResult = cell2 != "Normal" ? 1 : 0;
                         break;
                 }
                 e.Handled = true;
@@ -2424,7 +2414,7 @@ namespace E7_Gear_Optimizer
         {
             if (Application.ProductVersion != Util.ver)
             {
-                updated updated = new updated();
+                Updated updated = new Updated();
                 updated.ShowDialog();
                 Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 config.AppSettings.Settings.Remove("Version");

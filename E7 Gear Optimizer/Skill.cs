@@ -10,9 +10,8 @@ namespace E7_Gear_Optimizer
 {
     public class Skill
     {
-        const float POW_CONST = 1.871f;
-
-        static Regex enhancementDescRegex = new Regex(@"\+(\d+)% damage", RegexOptions.Compiled);
+        private const float POW_CONST = 1.871f;
+        private static readonly Regex enhancementDescRegex = new Regex(@"\+(\d+)% damage", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes abstract skill which damage is always equals to 0
@@ -45,7 +44,7 @@ namespace E7_Gear_Optimizer
         /// <summary>
         /// Collection of 'enhancement' JTokens to use in case of enhanceLevel's change 
         /// </summary>
-        JToken[] jEnhancement = null;
+        private readonly JToken[] jEnhancement = null;
 
         int enhanceLevel;
 
@@ -68,14 +67,14 @@ namespace E7_Gear_Optimizer
                     for (int i = 0; i < enhanceLevel; i++)
                     {
                         string desc = jEnhancement[i]["string"].ToString();
-                        var match = enhancementDescRegex.Match(desc);
+                        Match match = enhancementDescRegex.Match(desc);
                         if (match.Success)
                         {
                             DamageIncrease += int.Parse(match.Groups[1].Value);
                         }
                     }
                 }
-                damageIncrease = 1 + DamageIncrease / 100f;
+                damageIncrease = 1 + (DamageIncrease / 100f);
             }
         }
 
@@ -85,21 +84,21 @@ namespace E7_Gear_Optimizer
         /// </summary>
         public int DamageIncrease { get; private set; }
 
-        float pow;
-        float powSoul;
-        float atk;
-        float atkSoul;
-        float spd;
-        float spdSoul;
-        float def;
-        float defSoul;
-        float hp;
-        float hpSoul;
-        float critDmg = 1;
-        float critDmgSoul = 1;
-        float damageIncrease = 1;
-        float otherMultipliers = 1;
-        float otherMultipliersSoul = 1;
+        private readonly float pow;
+        private readonly float powSoul;
+        private readonly float atk;
+        private readonly float atkSoul;
+        private readonly float spd;
+        private readonly float spdSoul;
+        private readonly float def;
+        private readonly float defSoul;
+        private readonly float hp;
+        private readonly float hpSoul;
+        private readonly float critDmg = 1;
+        private readonly float critDmgSoul = 1;
+        private float damageIncrease = 1;
+        private readonly float otherMultipliers = 1;
+        private readonly float otherMultipliersSoul = 1;
 
         /// <summary>
         /// Calculate damage of the skill based on <see cref="SStats"/> of the hero
@@ -114,7 +113,7 @@ namespace E7_Gear_Optimizer
             float dmg;
             if (HasSoulburn && soulburn)
             {
-                dmg = (atkSoul * stats.ATK + hpSoul * stats.HP + defSoul * stats.DEF) * (1 + spdSoul * stats.SPD) * powSoul * otherMultipliersSoul;
+                dmg = ((atkSoul * stats.ATK) + (hpSoul * stats.HP) + (defSoul * stats.DEF)) * (1 + (spdSoul * stats.SPD)) * powSoul * otherMultipliersSoul;
                 if (crit)
                 {
                     dmg *= critDmgSoul * stats.CritDmg;
@@ -122,14 +121,14 @@ namespace E7_Gear_Optimizer
             }
             else
             { 
-                dmg = (atk * stats.ATK + hp * stats.HP + def * stats.DEF) * (1 + spd * stats.SPD) * pow * otherMultipliers;
+                dmg = ((atk * stats.ATK) + (hp * stats.HP) + (def * stats.DEF)) * (1 + (spd * stats.SPD)) * pow * otherMultipliers;
                 if (crit)
                 {
                     dmg *= critDmg * stats.CritDmg;
                 }
             }
             dmg *= POW_CONST * damageIncrease;
-            return dmg / (enemyDef / 300f + 1);
+            return dmg / ((enemyDef / 300f) + 1);
         }
 
         public class UnsupportedDamageModifierException : Exception
