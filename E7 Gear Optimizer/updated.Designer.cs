@@ -1,6 +1,6 @@
 ﻿namespace E7_Gear_Optimizer
 {
-    partial class updated
+    partial class Updated
     {
         /// <summary>
         /// Required designer variable.
