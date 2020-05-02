@@ -1532,45 +1532,43 @@ namespace E7_Gear_Optimizer
             if (cb_Set3.SelectedIndex != -1 && cb_Set3.Items[cb_Set3.SelectedIndex].ToString() != "")
                 setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set3.Items[cb_Set3.SelectedIndex].ToString()));
 
-
-            if (cb_keepEquip.Checked)
+            List<Item> gear = hero.getGear();
+            Item item;
+            foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
             {
-                List<Item> gear = hero.getGear();
-                foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
+                item = gear.Where(x => x.Type == itemType).FirstOrDefault();
+                if (item != null && cb_keepEquip.Checked)
                 {
-                    Item item = gear.Where(x => x.Type == itemType).FirstOrDefault(null);
-                    if (item != null)
+                    //TODO i can collapse the if / else if
+                    if (setFocus.Contains(item.Set) && !cb_Reversed.Checked)
                     {
-                        //TODO i can collapse the if / else if
-                        if (setFocus.Contains(item.Set) && !cb_Reversed.Checked)
-                        {
-                            items.Add(itemType, new List<Item>() { item });
-                        }
-                        else if (!setFocus.Contains(item.Set) && cb_Reversed.Checked)
-                        {
-                            items.Add(itemType, new List<Item>() { item });
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        items.Add(itemType, new List<Item>() { item });
                     }
-                    else
+                    else if (!setFocus.Contains(item.Set) && cb_Reversed.Checked)
                     {
-                        items.Add(itemType, filterItems(data.Items.Where(x => x.Type == itemType && x.Enhance >= nud_EnhanceFocus.Value).ToList(), hero, chb_Equipped.Checked, chb_Locked.Checked, setFocus, cb_Reversed.Checked));
+                        items.Add(itemType, new List<Item>() { item });
                     }
-
-                    //TODO ok this is calculated just for a progress bar, can prob do some good stuff here
-                    if (numResults < 0)
-                    {
-                        numResults *= items[itemType].Count;
+                    else { 
+                        //What do we do if there is an item but doesnt meet set criteria? I think if allow broken it tries to keep, else it needs to return immediately as no results
                     }
-                    else
-                    {
-                        numResults = items[itemType].Count;
-                    }
+                    
+                }
+                else
+                {
+                    items.Add(itemType, filterItems(data.Items.Where(x => x.Type == itemType && x.Enhance >= nud_EnhanceFocus.Value).ToList(), hero, chb_Equipped.Checked, chb_Locked.Checked, setFocus, cb_Reversed.Checked));
                 }
 
+
+                //TODO ok this is calculated just for a progress bar, can prob do some good stuff here
+                if (numResults < 0)
+                {
+                    numResults = items[itemType].Count;
+                }
+                else if (itemType != ItemType.All && itemType != ItemType.Artifact)
+                {
+                    numResults *= items[itemType].Count;
+                    
+                }
             }
 
             if (numResults == 0)
@@ -1672,7 +1670,7 @@ namespace E7_Gear_Optimizer
             SStats neckStats;
             foreach (Item n in necklaces)
             {
-                neckStats = new SStats(sStats);
+                neckStats = new SStats(sItemStats);
                 neckStats.Add(n.AllStats);
                 setCounter[(int)n.Set]++;
                 SStats ringStats;
@@ -1705,15 +1703,14 @@ namespace E7_Gear_Optimizer
                         {
                             SStats setBonusStats = hero.setBonusStats(activeSets);
                             SStats calculatedStats = new SStats();
-                            //calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
-                            calculatedStats.ATK = (currentStats.ATK * (1 + currentStats.ATKPercent + setBonusStats.ATKPercent + additonalAttackPercent/100)) + currentStats.ATK + hero.Artifact.SubStats[0].Value;
-                            calculatedStats.HP = (currentStats.HP * (1 + currentStats.HPPercent + setBonusStats.HPPercent)) + currentStats.HP + hero.Artifact.SubStats[1].Value;
-                            calculatedStats.DEF = (currentStats.DEF * (1 + currentStats.DEFPercent + setBonusStats.DEFPercent)) + currentStats.DEF;
-                            calculatedStats.SPD = (currentStats.SPD * (1 + currentStats.SPD)) + sItemStats.SPD;
-                            calculatedStats.Crit = currentStats.Crit + currentStats.Crit + setBonusStats.Crit;
-                            calculatedStats.CritDmg = currentStats.CritDmg + currentStats.CritDmg + setBonusStats.CritDmg;
-                            calculatedStats.EFF = currentStats.EFF + currentStats.EFF + setBonusStats.EFF;
-                            calculatedStats.RES = currentStats.RES + currentStats.RES + setBonusStats.RES;
+                            calculatedStats.ATK = (sStats.ATK * (1 + currentStats.ATKPercent + setBonusStats.ATKPercent + additonalAttackPercent/100)) + currentStats.ATK + hero.Artifact.SubStats[0].Value;
+                            calculatedStats.HP = (sStats.HP * (1 + currentStats.HPPercent + setBonusStats.HPPercent)) + currentStats.HP + hero.Artifact.SubStats[1].Value;
+                            calculatedStats.DEF = (sStats.DEF * (1 + currentStats.DEFPercent + setBonusStats.DEFPercent)) + currentStats.DEF;
+                            calculatedStats.SPD = (sStats.SPD * (1 + setBonusStats.SPD)) + currentStats.SPD;
+                            calculatedStats.Crit = sStats.Crit + currentStats.Crit + setBonusStats.Crit;
+                            calculatedStats.CritDmg = sStats.CritDmg + currentStats.CritDmg + setBonusStats.CritDmg;
+                            calculatedStats.EFF = sStats.EFF + currentStats.EFF + setBonusStats.EFF;
+                            calculatedStats.RES = sStats.RES + currentStats.RES + setBonusStats.RES;
                             valid = valid && checkFilter(calculatedStats, filter);
                             if (valid)
                             {
