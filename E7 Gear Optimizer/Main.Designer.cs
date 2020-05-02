@@ -244,6 +244,8 @@
             this.is_Ring = new E7_Gear_Optimizer.ItemStats();
             this.is_Boots = new E7_Gear_Optimizer.ItemStats();
             this.tb_Optimize = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.nud_AttackBonus = new System.Windows.Forms.NumericUpDown();
             this.b_EquipUnlockOptimize = new System.Windows.Forms.Button();
             this.lbl_Sorting = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
@@ -499,11 +501,11 @@
             this.cb1_SpeedTuner = new System.Windows.Forms.ComboBox();
             this.label53 = new System.Windows.Forms.Label();
             this.ofd_import = new System.Windows.Forms.OpenFileDialog();
+            this.fbd_import = new System.Windows.Forms.FolderBrowserDialog();
             this.sfd_export = new System.Windows.Forms.SaveFileDialog();
             this.tt_Skills = new System.Windows.Forms.ToolTip(this.components);
             this.tt_EquipUnlock = new System.Windows.Forms.ToolTip(this.components);
-            this.nud_AttackBonus = new System.Windows.Forms.NumericUpDown();
-            this.label40 = new System.Windows.Forms.Label();
+            this.rb_import_ocr = new System.Windows.Forms.RadioButton();
             this.tb_Inventory.SuspendLayout();
             this.tc_InventorySets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ItemLocked)).BeginInit();
@@ -533,6 +535,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Heroes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb_Hero)).BeginInit();
             this.tb_Optimize.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_EnemyDef)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud_LimitResults)).BeginInit();
@@ -566,7 +569,6 @@
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud1_SpeedTunerImprint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1_SpeedTuner)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_Inventory
@@ -1884,6 +1886,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.rb_import_ocr);
             this.tabPage1.Controls.Add(this.l_Status);
             this.tabPage1.Controls.Add(this.l_ImportResults);
             this.tabPage1.Controls.Add(this.b_ClearCache);
@@ -1994,7 +1997,7 @@
             // rb_import_this
             // 
             this.rb_import_this.AutoSize = true;
-            this.rb_import_this.Checked = true;
+            this.rb_import_this.Checked = false;
             this.rb_import_this.Location = new System.Drawing.Point(80, 361);
             this.rb_import_this.Name = "rb_import_this";
             this.rb_import_this.Size = new System.Drawing.Size(173, 17);
@@ -3013,6 +3016,23 @@
             this.tb_Optimize.Text = "Optimization";
             this.tb_Optimize.UseVisualStyleBackColor = true;
             this.tb_Optimize.TextChanged += new System.EventHandler(this.Tb_Optimize_TextChanged);
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(3, 185);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(135, 13);
+            this.label40.TabIndex = 152;
+            this.label40.Text = "Attack Bonus% (Gunny S2)";
+            // 
+            // nud_AttackBonus
+            // 
+            this.nud_AttackBonus.Location = new System.Drawing.Point(6, 199);
+            this.nud_AttackBonus.Name = "nud_AttackBonus";
+            this.nud_AttackBonus.Size = new System.Drawing.Size(46, 20);
+            this.nud_AttackBonus.TabIndex = 151;
+            this.nud_AttackBonus.ValueChanged += new System.EventHandler(this.nud_AttackBonus_ValueChanged);
             // 
             // b_EquipUnlockOptimize
             // 
@@ -5883,22 +5903,17 @@
             this.sfd_export.FileName = "E7 Gear Optimizer.json";
             this.sfd_export.Filter = "JSON|*.json";
             // 
-            // nud_AttackBonus
+            // rb_import_ocr
             // 
-            this.nud_AttackBonus.Location = new System.Drawing.Point(6, 199);
-            this.nud_AttackBonus.Name = "nud_AttackBonus";
-            this.nud_AttackBonus.Size = new System.Drawing.Size(46, 20);
-            this.nud_AttackBonus.TabIndex = 151;
-            this.nud_AttackBonus.ValueChanged += new System.EventHandler(this.nud_AttackBonus_ValueChanged);
-            // 
-            // label40
-            // 
-            this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(3, 185);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(135, 13);
-            this.label40.TabIndex = 152;
-            this.label40.Text = "Attack Bonus% (Gunny S2)";
+            this.rb_import_ocr.AutoSize = true;
+            this.rb_import_ocr.Checked = true;
+            this.rb_import_ocr.Location = new System.Drawing.Point(80, 338);
+            this.rb_import_ocr.Name = "rb_import_ocr";
+            this.rb_import_ocr.Size = new System.Drawing.Size(103, 17);
+            this.rb_import_ocr.TabIndex = 14;
+            this.rb_import_ocr.TabStop = true;
+            this.rb_import_ocr.Text = "Import from OCR";
+            this.rb_import_ocr.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -5952,6 +5967,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pb_Hero)).EndInit();
             this.tb_Optimize.ResumeLayout(false);
             this.tb_Optimize.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nud_EnemyDef)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -5997,7 +6013,6 @@
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud1_SpeedTunerImprint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1_SpeedTuner)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -6012,6 +6027,7 @@
         private System.Windows.Forms.TabControl tc_Main;
         private System.Windows.Forms.TabPage tb_Optimize;
         private System.Windows.Forms.OpenFileDialog ofd_import;
+        private System.Windows.Forms.FolderBrowserDialog fbd_import;
         private System.Windows.Forms.TabControl tc_Inventory;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
@@ -6469,6 +6485,7 @@
         private System.Windows.Forms.CheckBox cb_Reversed;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.NumericUpDown nud_AttackBonus;
+        private System.Windows.Forms.RadioButton rb_import_ocr;
     }
 }
 
