@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,45 @@ namespace E7_Gear_Optimizer
             Heroes = new List<Hero>();
             currentItemID = "0";
             currentHeroID = "0";
+        }
+
+        //Creates a json file with the stats of the pictures 
+        public void importFromOCR(string folderPath, IProgress<int> progress)
+        {
+            string folderpaths = folderPath + "\\*";
+
+            Process p = new Process
+            {
+                StartInfo = new ProcessStartInfo(@"python.exe", "OCR/e7_ocr_gear_2200x1080.py" + " " + folderpaths)
+                {
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            p.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            {
+
+                int progressNumber;
+                int nominator;
+                int demoninator;
+                int pos;
+
+                if (!String.IsNullOrEmpty(e.Data))
+                {
+                    pos = e.Data.IndexOf(' ');
+                    nominator = Int32.Parse(e.Data.Substring(0, pos));
+                    demoninator = Int32.Parse(e.Data.Substring(e.Data.LastIndexOf(' ')));
+                    progressNumber = (int)((float)nominator / (demoninator) * 100);
+                    progress.Report(progressNumber);
+                }
+
+            });
+            p.Start();
+            p.BeginOutputReadLine();
+            p.WaitForExit();
+
         }
 
         //Parses the JSON data of the web Optimizer written by /u/HyrTheWinter
