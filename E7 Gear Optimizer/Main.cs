@@ -1543,6 +1543,9 @@ namespace E7_Gear_Optimizer
             Item item;
             foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
             {
+                if (itemType == ItemType.Artifact || itemType == ItemType.All) {
+                    continue;
+                }
                 item = gear.Where(x => x.Type == itemType).FirstOrDefault();
                 if (item != null && cb_keepEquip.Checked)
                 {
