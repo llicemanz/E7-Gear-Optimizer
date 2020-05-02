@@ -177,6 +177,9 @@
     <EmbeddedResource Include="updated.resx">
       <DependentUpon>updated.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="endure.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Data.datasource" />
     <None Include="Properties\Settings.settings">
@@ -323,6 +326,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\newEquipped.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bottom.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="e7_ocr_gear_2200x1080.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="top.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
