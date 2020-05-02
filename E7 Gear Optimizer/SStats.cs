@@ -89,23 +89,19 @@ namespace E7_Gear_Optimizer
             RES += sStats.RES;
         }
 
-        /// <summary>
-        /// Subtracts values of <paramref name="sStats"/> properties from corresponding values of the <see cref="SStats"/>
-        /// </summary>
-        /// <param name="sStats"></param>
-        public void Subtract(SStats sStats)
+        public void AddAll(SStats sStats1, SStats sStats2, SStats sStats3)
         {
-            ATKPercent -= sStats.ATKPercent;
-            ATK -= sStats.ATK;
-            SPD -= sStats.SPD;
-            Crit -= sStats.Crit;
-            CritDmg -= sStats.CritDmg;
-            HPPercent -= sStats.HPPercent;
-            HP -= sStats.HP;
-            DEFPercent -= sStats.DEFPercent;
-            DEF -= sStats.DEF;
-            EFF -= sStats.EFF;
-            RES -= sStats.RES;
+            ATKPercent += sStats1.ATKPercent + sStats2.ATKPercent + sStats3.ATKPercent;
+            ATK += sStats1.ATK + sStats2.ATK + sStats3.ATK;
+            SPD += sStats1.SPD + sStats2.SPD + sStats3.SPD;
+            Crit += sStats1.Crit + sStats2.Crit + sStats3.Crit;
+            CritDmg += sStats1.CritDmg + sStats2.CritDmg + sStats3.CritDmg;
+            HPPercent += sStats1.HPPercent + sStats2.HPPercent + sStats3.HPPercent;
+            HP += sStats1.HP + sStats2.HP + sStats3.HP;
+            DEFPercent += sStats1.DEFPercent + sStats2.DEFPercent + sStats3.DEFPercent;
+            DEF += sStats1.DEF + sStats2.DEF + sStats3.DEF;
+            EFF += sStats1.EFF + sStats2.EFF + sStats3.EFF;
+            RES += sStats1.RES + sStats2.RES + sStats3.RES;
         }
 
         /// <summary>

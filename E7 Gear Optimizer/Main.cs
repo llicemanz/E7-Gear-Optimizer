@@ -1681,13 +1681,13 @@ namespace E7_Gear_Optimizer
             foreach (Item n in necklaces)
             {
                 neckStats = new SStats(sItemStats);
-                neckStats.Add(n.AllStats);
+                //neckStats.Add(n.AllStats);
                 setCounter[(int)n.Set]++;
                 SStats ringStats;
                 foreach (Item r in rings)
                 {
                     ringStats = new SStats(neckStats);
-                    ringStats.Add(r.AllStats);
+                    //ringStats.Add(r.AllStats);
                     setCounter[(int)r.Set]++;
                     SStats currentStats;
                     foreach (Item b in boots)
@@ -1695,7 +1695,8 @@ namespace E7_Gear_Optimizer
                         currentStats = new SStats(ringStats);
                         ct.ThrowIfCancellationRequested();
 
-                        currentStats.Add(b.AllStats);
+                        //currentStats.Add(b.AllStats);
+                        currentStats.AddAll(n.AllStats, r.AllStats, b.AllStats);
                         setCounter[(int)b.Set]++;
 
                         List<Set> activeSets = Util.ActiveSet(setCounter);
