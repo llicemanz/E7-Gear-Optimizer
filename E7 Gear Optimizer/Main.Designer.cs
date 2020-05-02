@@ -250,6 +250,7 @@
             this.nud_EnemyDef = new System.Windows.Forms.NumericUpDown();
             this.label38 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cb_Reversed = new System.Windows.Forms.CheckBox();
             this.nud_LimitResults = new System.Windows.Forms.NumericUpDown();
             this.cb_LimitResults = new System.Windows.Forms.CheckBox();
             this.b_BootsFocus = new System.Windows.Forms.Button();
@@ -501,6 +502,8 @@
             this.sfd_export = new System.Windows.Forms.SaveFileDialog();
             this.tt_Skills = new System.Windows.Forms.ToolTip(this.components);
             this.tt_EquipUnlock = new System.Windows.Forms.ToolTip(this.components);
+            this.nud_AttackBonus = new System.Windows.Forms.NumericUpDown();
+            this.label40 = new System.Windows.Forms.Label();
             this.tb_Inventory.SuspendLayout();
             this.tc_InventorySets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ItemLocked)).BeginInit();
@@ -563,6 +566,7 @@
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud1_SpeedTunerImprint)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1_SpeedTuner)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_Inventory
@@ -2955,6 +2959,8 @@
             // 
             // tb_Optimize
             // 
+            this.tb_Optimize.Controls.Add(this.label40);
+            this.tb_Optimize.Controls.Add(this.nud_AttackBonus);
             this.tb_Optimize.Controls.Add(this.b_EquipUnlockOptimize);
             this.tb_Optimize.Controls.Add(this.lbl_Sorting);
             this.tb_Optimize.Controls.Add(this.label35);
@@ -3031,7 +3037,7 @@
             // label35
             // 
             this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(3, 185);
+            this.label35.Location = new System.Drawing.Point(3, 221);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(91, 26);
             this.label35.TabIndex = 148;
@@ -3040,7 +3046,7 @@
             // 
             // nud_EnemyDef
             // 
-            this.nud_EnemyDef.Location = new System.Drawing.Point(6, 216);
+            this.nud_EnemyDef.Location = new System.Drawing.Point(3, 252);
             this.nud_EnemyDef.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -3064,6 +3070,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cb_Reversed);
             this.panel1.Controls.Add(this.nud_LimitResults);
             this.panel1.Controls.Add(this.cb_LimitResults);
             this.panel1.Controls.Add(this.b_BootsFocus);
@@ -3092,6 +3099,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(207, 309);
             this.panel1.TabIndex = 141;
+            // 
+            // cb_Reversed
+            // 
+            this.cb_Reversed.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.cb_Reversed.Location = new System.Drawing.Point(97, 204);
+            this.cb_Reversed.Name = "cb_Reversed";
+            this.cb_Reversed.Size = new System.Drawing.Size(98, 18);
+            this.cb_Reversed.TabIndex = 147;
+            this.cb_Reversed.Text = "Reversed Sets";
+            this.cb_Reversed.UseVisualStyleBackColor = true;
             // 
             // nud_LimitResults
             // 
@@ -3196,7 +3213,7 @@
             this.cb_Broken.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cb_Broken.Location = new System.Drawing.Point(1, 203);
             this.cb_Broken.Name = "cb_Broken";
-            this.cb_Broken.Size = new System.Drawing.Size(136, 18);
+            this.cb_Broken.Size = new System.Drawing.Size(90, 18);
             this.cb_Broken.TabIndex = 140;
             this.cb_Broken.Text = "Broken Sets";
             this.cb_Broken.UseVisualStyleBackColor = true;
@@ -3387,7 +3404,7 @@
             // 
             // b_FilterResults
             // 
-            this.b_FilterResults.Location = new System.Drawing.Point(28, 257);
+            this.b_FilterResults.Location = new System.Drawing.Point(19, 278);
             this.b_FilterResults.Name = "b_FilterResults";
             this.b_FilterResults.Size = new System.Drawing.Size(75, 36);
             this.b_FilterResults.TabIndex = 136;
@@ -5866,6 +5883,23 @@
             this.sfd_export.FileName = "E7 Gear Optimizer.json";
             this.sfd_export.Filter = "JSON|*.json";
             // 
+            // nud_AttackBonus
+            // 
+            this.nud_AttackBonus.Location = new System.Drawing.Point(6, 199);
+            this.nud_AttackBonus.Name = "nud_AttackBonus";
+            this.nud_AttackBonus.Size = new System.Drawing.Size(46, 20);
+            this.nud_AttackBonus.TabIndex = 151;
+            this.nud_AttackBonus.ValueChanged += new System.EventHandler(this.nud_AttackBonus_ValueChanged);
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(3, 185);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(135, 13);
+            this.label40.TabIndex = 152;
+            this.label40.Text = "Attack Bonus% (Gunny S2)";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5873,7 +5907,7 @@
             this.AutoScroll = true;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1469, 690);
+            this.ClientSize = new System.Drawing.Size(1486, 707);
             this.Controls.Add(this.tc_Main);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -5963,6 +5997,7 @@
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nud1_SpeedTunerImprint)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pb1_SpeedTuner)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nud_AttackBonus)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -6431,6 +6466,9 @@
         private System.Windows.Forms.Label l_Status;
         private System.Windows.Forms.Button b_EquipUnlockOptimize;
         private System.Windows.Forms.ToolTip tt_EquipUnlock;
+        private System.Windows.Forms.CheckBox cb_Reversed;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.NumericUpDown nud_AttackBonus;
     }
 }
 
