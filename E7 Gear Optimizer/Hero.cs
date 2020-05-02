@@ -287,14 +287,16 @@ namespace E7_Gear_Optimizer
             return calculatedStats;
         }
 
-        public Dictionary<Stats, float> calcStatsWithoutGear(float critbonus)
+        public Dictionary<Stats, float> calcStatsWithoutGear(float critbonus, int passiveAttackPercent = 0)
         {
             Dictionary<Stats, float> stats = new Dictionary<Stats, float>();
             foreach (Stats s in statsArrayGeneric)
             {
                 stats[s] = 0;
             }
-            stats[Stats.ATK] = (BaseStats[Stats.ATK] * (1 + (AwakeningStats.ContainsKey(Stats.ATKPercent) ? AwakeningStats[Stats.ATKPercent] : 0))) + (AwakeningStats.ContainsKey(Stats.ATK) ? AwakeningStats[Stats.ATK] : 0);
+            //stats[Stats.ATK] = (BaseStats[Stats.ATK] * (1 + (AwakeningStats.ContainsKey(Stats.ATKPercent) ? AwakeningStats[Stats.ATKPercent] : 0))) + (AwakeningStats.ContainsKey(Stats.ATK) ? AwakeningStats[Stats.ATK] : 0);
+            stats[Stats.ATK] = (BaseStats[Stats.ATK] * (1 + (AwakeningStats.ContainsKey(Stats.ATKPercent) ? AwakeningStats[Stats.ATKPercent] + passiveAttackPercent : passiveAttackPercent)))
+                + (AwakeningStats.ContainsKey(Stats.ATK) ? AwakeningStats[Stats.ATK] : 0);
             stats[Stats.HP] = (BaseStats[Stats.HP] * (1 + (AwakeningStats.ContainsKey(Stats.HPPercent) ? AwakeningStats[Stats.HPPercent] : 0))) + (AwakeningStats.ContainsKey(Stats.HP) ? AwakeningStats[Stats.HP] : 0);
             stats[Stats.DEF] = BaseStats[Stats.DEF] * (1 + (AwakeningStats.ContainsKey(Stats.DEFPercent) ? AwakeningStats[Stats.DEFPercent] : 0));
             stats[Stats.SPD] = BaseStats[Stats.SPD] + (AwakeningStats.ContainsKey(Stats.SPD) ? AwakeningStats[Stats.SPD] : 0);

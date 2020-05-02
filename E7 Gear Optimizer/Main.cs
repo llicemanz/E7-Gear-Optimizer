@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1331,12 +1332,12 @@ namespace E7_Gear_Optimizer
             {
                 Base = Base.Where(x => !x.Locked || x.Equipped == hero).ToList();
             }
-            long necklaces = getRightSideGear(Base, ItemType.Necklace).Where(x => checkSets(x, setFocus)).Count();
-            long rings = getRightSideGear(Base, ItemType.Ring).Where(x => checkSets(x, setFocus)).Count();
-            long boots = getRightSideGear(Base, ItemType.Boots).Where(x => checkSets(x, setFocus)).Count();
-            long weapons = Base.Where(x => x.Type == ItemType.Weapon).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus)).Count();
-            long helmets = Base.Where(x => x.Type == ItemType.Helmet).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus)).Count();
-            long armors = Base.Where(x => x.Type == ItemType.Armor).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus)).Count();
+            long necklaces = getRightSideGear(Base, ItemType.Necklace).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
+            long rings = getRightSideGear(Base, ItemType.Ring).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
+            long boots = getRightSideGear(Base, ItemType.Boots).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
+            long weapons = Base.Where(x => x.Type == ItemType.Weapon).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
+            long helmets = Base.Where(x => x.Type == ItemType.Helmet).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
+            long armors = Base.Where(x => x.Type == ItemType.Armor).Where(x => checkForceStats(x)).Where(x => checkSets(x, setFocus, cb_Reversed.Checked)).Count();
 
             if (cb_keepEquip.Checked)
             {
@@ -1456,13 +1457,16 @@ namespace E7_Gear_Optimizer
             return pass;
         }
 
-        private bool checkSets(Item item, List<Set> setFocus)
+        private bool checkSets(Item item, List<Set> setFocus, Boolean reversed)
         {
             bool pass = true;
             int slots = Util.setSlots(setFocus);
             if (slots == 6)
             {
                 pass = setFocus.Contains(item.Set);
+                if (reversed) {
+                    pass = !pass;
+                }
             }
             else if (slots > 6)
             {
@@ -1475,6 +1479,28 @@ namespace E7_Gear_Optimizer
         {
             l_Results.Text = numberOfResults().ToString("#,0");
         }
+
+
+        private List<Item> filterItems(List<Item> items, Hero hero, bool keepEquiped, bool useLocked, List<Set> setFocus, Boolean reverseSets)
+        {
+            List<Item> filteredItems = items;
+            if (!keepEquiped)
+            {
+                //TODO This isnt respecting set focus, have to make sure if equip set breaks focus it cant be included possibly?
+                filteredItems = filteredItems.Where(x => (x.Equipped == null || x.Equipped == hero) && checkSets(x, setFocus, reverseSets)).ToList();
+            }
+
+            if (!useLocked)
+            {
+                filteredItems = filteredItems.Where(x => (!x.Locked || x.Equipped == hero) && checkSets(x, setFocus, reverseSets)).ToList();
+            }
+
+            filteredItems = filteredItems.Where(x => checkSets(x, setFocus, reverseSets)).Where(x => checkForceStats(x)).ToList();
+
+            return filteredItems;
+        }
+
+
 
         private void Chb_Equipped_CheckedChanged(object sender, EventArgs e)
         {
@@ -1491,32 +1517,12 @@ namespace E7_Gear_Optimizer
             combinations.Clear();
             Hero hero = data.Heroes.Find(x => x.ID == cb_OptimizeHero.Text.Split().Last());
             optimizeHero = hero;
-            if (hero != null)
-            {
-                List<Item> weapons = data.Items.Where(x => x.Type == ItemType.Weapon && x.Enhance >= nud_EnhanceFocus.Value).ToList();
-                List<Item> helmets = data.Items.Where(x => x.Type == ItemType.Helmet && x.Enhance >= nud_EnhanceFocus.Value).ToList();
-                List<Item> armors = data.Items.Where(x => x.Type == ItemType.Armor && x.Enhance >= nud_EnhanceFocus.Value).ToList();
-                List<Item> necklaces = getRightSideGear(data.Items, ItemType.Necklace).ToList();
-                List<Item> rings = getRightSideGear(data.Items, ItemType.Ring).ToList();
-                List<Item> boots = getRightSideGear(data.Items, ItemType.Boots).ToList();
-                if (!chb_Equipped.Checked)
-                {
-                    weapons = weapons.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                    helmets = helmets.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                    armors = armors.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                    necklaces = necklaces.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                    rings = rings.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                    boots = boots.Where(x => x.Equipped == null || x.Equipped == hero).ToList();
-                }
-                if (!chb_Locked.Checked)
-                {
-                    weapons = weapons.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                    helmets = helmets.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                    armors = armors.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                    necklaces = necklaces.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                    rings = rings.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                    boots = boots.Where(x => !x.Locked || x.Equipped == hero).ToList();
-                }
+            Dictionary<ItemType, List<Item>> items = new Dictionary<ItemType, List<Item>>();
+            long numResults = -1;
+
+            if (hero == null) {
+                return;
+            }
 
                 List<Set> setFocus = new List<Set>();
                 if (cb_Set1.SelectedIndex != -1 && cb_Set1.Items[cb_Set1.SelectedIndex].ToString() != "")
@@ -1526,55 +1532,44 @@ namespace E7_Gear_Optimizer
                 if (cb_Set3.SelectedIndex != -1 && cb_Set3.Items[cb_Set3.SelectedIndex].ToString() != "")
                     setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set3.Items[cb_Set3.SelectedIndex].ToString()));
 
-                weapons = weapons.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
-                helmets = helmets.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
-                armors = armors.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
-                necklaces = necklaces.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
-                rings = rings.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
-                boots = boots.Where(x => checkSets(x, setFocus)).Where(x => checkForceStats(x)).ToList();
 
                 if (cb_keepEquip.Checked)
                 {
                     List<Item> gear = hero.getGear();
-                    foreach (Item item in gear)
+                    foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
                     {
-                        switch (item.Type)
+                        Item item = gear.Where(x => x.Type == itemType).FirstOrDefault(null);
+                        if (item != null)
                         {
-                            case ItemType.Armor:
-                                armors.Clear();
-                                armors.Add(item);
-                                break;
-                            case ItemType.Boots:
-                                boots.Clear();
-                                boots.Add(item);
-                                break;
-                            case ItemType.Helmet:
-                                helmets.Clear();
-                                helmets.Add(item);
-                                break;
-                            case ItemType.Necklace:
-                                necklaces.Clear();
-                                necklaces.Add(item);
-                                break;
-                            case ItemType.Ring:
-                                rings.Clear();
-                                rings.Add(item);
-                                break;
-                            case ItemType.Weapon:
-                                weapons.Clear();
-                                weapons.Add(item);
-                                break;
-                            default:
-                                break;
+                            //TODO i can collapse the if / else if
+                            if (setFocus.Contains(item.Set) && !cb_Reversed.Checked) {
+                                items.Add(itemType, new List<Item>() { item });
+                            } else if (!setFocus.Contains(item.Set) && cb_Reversed.Checked) {
+                                items.Add(itemType, new List<Item>() { item });
+                            } else {
+                                return;
+                            }
+                        } else {
+                            items.Add(itemType, filterItems(data.Items.Where(x => x.Type == itemType && x.Enhance >= nud_EnhanceFocus.Value).ToList(), hero, chb_Equipped.Checked, chb_Locked.Checked, setFocus, cb_Reversed.Checked));
+                        }
+
+                        //TODO ok this is calculated just for a progress bar, can prob do some good stuff here
+                        if (numResults < 0)
+                        {
+                            numResults *= items[itemType].Count;
+                        }
+                        else {
+                            numResults = items[itemType].Count;
                         }
                     }
+
                 }
 
-                long numResults = (long)weapons.Count * helmets.Count * armors.Count * necklaces.Count * rings.Count * boots.Count;
                 if (numResults == 0)
                 {
                     return;
                 }
+
                 long counter = 0;
                 IProgress<int> progress = new Progress<int>(x =>
                 {
@@ -1590,19 +1585,21 @@ namespace E7_Gear_Optimizer
                 SStats sItemStats = new SStats();
                 Dictionary<Stats, (float, float)> optimizedFilterStats = optimizeFilterStats();
                 Interlocked.Exchange(ref resultsCurrent, 0);
-                foreach (Item w in weapons)
+                float additionalAttackPercent = (float)nud_AttackBonus.Value;
+                foreach (Item w in items[ItemType.Weapon])
                 {
                     sItemStats.Add(w.AllStats);
-                    foreach (Item h in helmets)
+                    foreach (Item h in items[ItemType.Helmet])
                     {
                         sItemStats.Add(h.AllStats);
-                        foreach (Item a in armors)
+                        foreach (Item a in items[ItemType.Armor])
                         {
                             sItemStats.Add(a.AllStats);
 
                             SStats sItemStatsTemp = new SStats(sItemStats);
 
-                            tasks.Add(Task.Run(() => calculate(w, h, a, necklaces, rings, boots, hero, sHeroStats, optimizedFilterStats, setFocus, progress, sItemStatsTemp, cb_Broken.Checked, tokenSource.Token), tokenSource.Token));
+                            tasks.Add(Task.Run(() => calculate(w, h, a, items[ItemType.Necklace], items[ItemType.Ring], items[ItemType.Boots], hero, sHeroStats, optimizedFilterStats, setFocus
+                                , progress, sItemStatsTemp, cb_Broken.Checked, tokenSource.Token, additionalAttackPercent), tokenSource.Token));
 
                             sItemStats.Subtract(a.AllStats);
                         }
@@ -1641,7 +1638,7 @@ namespace E7_Gear_Optimizer
                     pB_Optimize.Hide();
                     pB_Optimize.Value = 0;
                 }
-            }
+            
         }
 
         //Calculate all possible gear combinations and check whether they satisfy the given filters
@@ -1651,7 +1648,8 @@ namespace E7_Gear_Optimizer
                                                         SStats sStats,
                                                         Dictionary<Stats, (float, float)> filter, List<Set> setFocus,
                                                         IProgress<int> progress, SStats sItemStats,
-                                                        bool brokenSets, CancellationToken ct)
+                                                        bool brokenSets, CancellationToken ct,
+                                                        float additonalAttackPercent)
         {
             List<(Item[], SStats)> combinations = new List<(Item[], SStats)>();
             if (limitResults && Interlocked.Read(ref resultsCurrent) >= limitResultsNum)
@@ -1693,7 +1691,8 @@ namespace E7_Gear_Optimizer
                         {
                             SStats setBonusStats = hero.setBonusStats(activeSets);
                             SStats calculatedStats = new SStats();
-                            calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
+                            //calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
+                            calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent + additonalAttackPercent/100)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
                             calculatedStats.HP = (sStats.HP * (1 + sItemStats.HPPercent + setBonusStats.HPPercent)) + sItemStats.HP + hero.Artifact.SubStats[1].Value;
                             calculatedStats.DEF = (sStats.DEF * (1 + sItemStats.DEFPercent + setBonusStats.DEFPercent)) + sItemStats.DEF;
                             calculatedStats.SPD = (sStats.SPD * (1 + setBonusStats.SPD)) + sItemStats.SPD;
@@ -2341,6 +2340,9 @@ namespace E7_Gear_Optimizer
                 {
                     SStats heroStats = new SStats(hero.CurrentStats);
                     heroStats.Crit += (float)nud_CritBonus.Value / 100f;
+                    //TODO Calculate new hero base attack... and diff with previous values that were there
+                    float attack = hero.BaseStats[Stats.ATK] * (float) nud_AttackBonus.Value / 100f;
+
                     values[0] = (int)hero.CurrentStats[Stats.ATK];
                     values[1] = (int)hero.CurrentStats[Stats.SPD];
                     values[2] = heroStats.Crit.ToString("P0", CultureInfo.CreateSpecificCulture("en-US"));
@@ -2835,6 +2837,12 @@ namespace E7_Gear_Optimizer
                 item.Locked = false;
             }
             B_EquipOptimize_Click(null, null);
+        }
+
+        private void nud_AttackBonus_ValueChanged(object sender, EventArgs e)
+        {
+            //TODO THis would have to calculate prev vs current changes from the add % anddo the diff
+            
         }
     }
 }
