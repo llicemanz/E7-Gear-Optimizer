@@ -177,7 +177,7 @@
     <EmbeddedResource Include="updated.resx">
       <DependentUpon>updated.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="endure.json">
+    <None Include="OCR\endure.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -328,13 +328,13 @@
     <None Include="Resources\newEquipped.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bottom.jpg">
+    <Content Include="OCR\bottom.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="e7_ocr_gear_2200x1080.py">
+    <Content Include="OCR\e7_ocr_gear_2200x1080.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="top.jpg">
+    <Content Include="OCR\top.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

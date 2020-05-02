@@ -369,15 +369,22 @@ namespace E7_Gear_Optimizer
                     import(ofd_import.FileName, true);
                 }
             }
+            else if (rb_import_ocr.Checked)
+            {
+                if (fbd_import.ShowDialog() == DialogResult.OK)
+                {
+                    import(fbd_import.SelectedPath, false, false, true);
+                }
+            }
             else
             {
                 MessageBox.Show("Please select the source to import from!");
             }
         }
 
-        private void import(string fileName, bool web = false, bool append = false)
+        private void import(string fileName, bool web = false, bool append = false, bool folder = false)
         {
-            Import importForm = new Import(data, fileName, web, append);
+            Import importForm = new Import(data, fileName, web, append, folder);
             importForm.ShowDialog();
             if (!importForm.result)
             {
@@ -2549,6 +2556,13 @@ namespace E7_Gear_Optimizer
                 if (ofd_import.ShowDialog() == DialogResult.OK)
                 {
                     import(ofd_import.FileName, true, true);
+                }
+            }
+            else if (rb_import_ocr.Checked)
+            {
+                if (fbd_import.ShowDialog() == DialogResult.OK)
+                {
+                    import(fbd_import.SelectedPath, false, true, true);
                 }
             }
             else

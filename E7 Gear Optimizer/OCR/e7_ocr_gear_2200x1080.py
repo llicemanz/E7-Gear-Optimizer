@@ -116,7 +116,7 @@ for name in filenames:
     # print(name)
 
     # Top Box
-    temp_top = cv2.imread('top.jpg', 0)
+    temp_top = cv2.imread('OCR/top.jpg', 0)
     _, _, _, max_loc = cv2.minMaxLoc(
         cv2.matchTemplate(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), temp_top, cv2.TM_CCOEFF_NORMED))
     # Fixed width, then crop 160 pixels from top triangle
@@ -124,7 +124,7 @@ for name in filenames:
     # cv2.imwrite('e7/top_box.jpg', top_box)
 
     # Bottom Box
-    temp_bot = cv2.imread('bottom.jpg', 0)
+    temp_bot = cv2.imread('OCR/bottom.jpg', 0)
     _, _, _, max_loc = cv2.minMaxLoc(
         cv2.matchTemplate(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), temp_bot, cv2.TM_CCOEFF_NORMED))
     # Fixed width, shift down 25 from divider, then crop 335 pixels deep
@@ -177,7 +177,7 @@ for name in filenames:
 # export["heroes"].append(chars)
 
 # Export to json for importing into optimizer: https://eseo-8a854.firebaseapp.com/
-with open('endure.json', 'w') as fp:
+with open('OCR/endure.json', 'w') as fp:
     json.dump(export, fp)
     
 
