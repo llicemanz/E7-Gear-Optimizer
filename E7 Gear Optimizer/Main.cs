@@ -1524,121 +1524,128 @@ namespace E7_Gear_Optimizer
                 return;
             }
 
-                List<Set> setFocus = new List<Set>();
-                if (cb_Set1.SelectedIndex != -1 && cb_Set1.Items[cb_Set1.SelectedIndex].ToString() != "")
-                    setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set1.Items[cb_Set1.SelectedIndex].ToString()));
-                if (cb_Set2.SelectedIndex != -1 && cb_Set2.Items[cb_Set2.SelectedIndex].ToString() != "")
-                    setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set2.Items[cb_Set2.SelectedIndex].ToString()));
-                if (cb_Set3.SelectedIndex != -1 && cb_Set3.Items[cb_Set3.SelectedIndex].ToString() != "")
-                    setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set3.Items[cb_Set3.SelectedIndex].ToString()));
+            List<Set> setFocus = new List<Set>();
+            if (cb_Set1.SelectedIndex != -1 && cb_Set1.Items[cb_Set1.SelectedIndex].ToString() != "")
+                setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set1.Items[cb_Set1.SelectedIndex].ToString()));
+            if (cb_Set2.SelectedIndex != -1 && cb_Set2.Items[cb_Set2.SelectedIndex].ToString() != "")
+                setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set2.Items[cb_Set2.SelectedIndex].ToString()));
+            if (cb_Set3.SelectedIndex != -1 && cb_Set3.Items[cb_Set3.SelectedIndex].ToString() != "")
+                setFocus.Add((Set)Enum.Parse(typeof(Set), cb_Set3.Items[cb_Set3.SelectedIndex].ToString()));
 
 
-                if (cb_keepEquip.Checked)
+            if (cb_keepEquip.Checked)
+            {
+                List<Item> gear = hero.getGear();
+                foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
                 {
-                    List<Item> gear = hero.getGear();
-                    foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
+                    Item item = gear.Where(x => x.Type == itemType).FirstOrDefault(null);
+                    if (item != null)
                     {
-                        Item item = gear.Where(x => x.Type == itemType).FirstOrDefault(null);
-                        if (item != null)
+                        //TODO i can collapse the if / else if
+                        if (setFocus.Contains(item.Set) && !cb_Reversed.Checked)
                         {
-                            //TODO i can collapse the if / else if
-                            if (setFocus.Contains(item.Set) && !cb_Reversed.Checked) {
-                                items.Add(itemType, new List<Item>() { item });
-                            } else if (!setFocus.Contains(item.Set) && cb_Reversed.Checked) {
-                                items.Add(itemType, new List<Item>() { item });
-                            } else {
-                                return;
-                            }
-                        } else {
-                            items.Add(itemType, filterItems(data.Items.Where(x => x.Type == itemType && x.Enhance >= nud_EnhanceFocus.Value).ToList(), hero, chb_Equipped.Checked, chb_Locked.Checked, setFocus, cb_Reversed.Checked));
+                            items.Add(itemType, new List<Item>() { item });
                         }
-
-                        //TODO ok this is calculated just for a progress bar, can prob do some good stuff here
-                        if (numResults < 0)
+                        else if (!setFocus.Contains(item.Set) && cb_Reversed.Checked)
                         {
-                            numResults *= items[itemType].Count;
+                            items.Add(itemType, new List<Item>() { item });
                         }
-                        else {
-                            numResults = items[itemType].Count;
+                        else
+                        {
+                            return;
                         }
                     }
-
-                }
-
-                if (numResults == 0)
-                {
-                    return;
-                }
-
-                long counter = 0;
-                IProgress<int> progress = new Progress<int>(x =>
-                {
-                    counter += x;
-                    var val = 100 * counter / numResults;
-                    pB_Optimize.Value = (int)(val);
-                });
-                pB_Optimize.Show();
-                b_CancelOptimize.Show();
-                List<Task<List<(Item[], SStats)>>> tasks = new List<Task<List<(Item[], SStats)>>>();
-                tokenSource = new CancellationTokenSource();
-                SStats sHeroStats = new SStats(hero.calcStatsWithoutGear((float)nud_CritBonus.Value / 100f));
-                SStats sItemStats = new SStats();
-                Dictionary<Stats, (float, float)> optimizedFilterStats = optimizeFilterStats();
-                Interlocked.Exchange(ref resultsCurrent, 0);
-                float additionalAttackPercent = (float)nud_AttackBonus.Value;
-                foreach (Item w in items[ItemType.Weapon])
-                {
-                    sItemStats.Add(w.AllStats);
-                    foreach (Item h in items[ItemType.Helmet])
+                    else
                     {
-                        sItemStats.Add(h.AllStats);
-                        foreach (Item a in items[ItemType.Armor])
-                        {
-                            sItemStats.Add(a.AllStats);
-
-                            SStats sItemStatsTemp = new SStats(sItemStats);
-
-                            tasks.Add(Task.Run(() => calculate(w, h, a, items[ItemType.Necklace], items[ItemType.Ring], items[ItemType.Boots], hero, sHeroStats, optimizedFilterStats, setFocus
-                                , progress, sItemStatsTemp, cb_Broken.Checked, tokenSource.Token, additionalAttackPercent), tokenSource.Token));
-
-                            sItemStats.Subtract(a.AllStats);
-                        }
-                        sItemStats.Subtract(h.AllStats);
+                        items.Add(itemType, filterItems(data.Items.Where(x => x.Type == itemType && x.Enhance >= nud_EnhanceFocus.Value).ToList(), hero, chb_Equipped.Checked, chb_Locked.Checked, setFocus, cb_Reversed.Checked));
                     }
-                    sItemStats.Subtract(w.AllStats);
-                }
-                try
-                {
-                    if (tasks.Count > 0)
+
+                    //TODO ok this is calculated just for a progress bar, can prob do some good stuff here
+                    if (numResults < 0)
                     {
-                        combinations = (await Task.WhenAll(tasks)).Aggregate((a, b) => { a.AddRange(b); return a; });
-                        if (limitResults && combinations.Count > limitResultsNum)
-                        {
-                            combinations = combinations.Take(limitResultsNum).ToList();
-                        }
+                        numResults *= items[itemType].Count;
                     }
-                    b_CancelOptimize.Hide();
-                    pB_Optimize.Hide();
-                    pB_Optimize.Value = 0;
-                    //Display the first page of results. Each page consists of 100 results
-                    dgv_OptimizeResults.RowCount = Math.Min(100, combinations.Count);
-                    optimizePage = combinations.Count > 0 ? 1 : 0;
-                    l_Pages.Text = optimizePage + " / " + ((combinations.Count + 99) / 100);
-                    if (limitResults && resultsCurrent >= limitResultsNum)
+                    else
                     {
-                        MessageBox.Show("Maximum number of combinations reached. Please try to narrow the filter.", "Limit break", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        numResults = items[itemType].Count;
                     }
                 }
-                catch (OperationCanceledException)
+
+            }
+
+            if (numResults == 0)
+            {
+                return;
+            }
+
+            long counter = 0;
+            IProgress<int> progress = new Progress<int>(x =>
+            {
+                counter += x;
+                var val = 100 * counter / numResults;
+                pB_Optimize.Value = (int)(val);
+            });
+            pB_Optimize.Show();
+            b_CancelOptimize.Show();
+            List<Task<List<(Item[], SStats)>>> tasks = new List<Task<List<(Item[], SStats)>>>();
+            tokenSource = new CancellationTokenSource();
+            SStats sHeroStats = new SStats(hero.calcStatsWithoutGear((float)nud_CritBonus.Value / 100f));
+            Dictionary<Stats, (float, float)> optimizedFilterStats = optimizeFilterStats();
+            Interlocked.Exchange(ref resultsCurrent, 0);
+            float additionalAttackPercent = (float)nud_AttackBonus.Value;
+            SStats weaponStats;
+            foreach (Item w in items[ItemType.Weapon])
+            {
+                weaponStats = new SStats();
+                weaponStats.Add(w.AllStats);
+                SStats helmetStats;
+                foreach (Item h in items[ItemType.Helmet])
                 {
-                    dgv_OptimizeResults.RowCount = Math.Min(100, combinations.Count);
-                    optimizePage = 1;
-                    l_Pages.Text = "1 / " + ((combinations.Count + 99) / 100);
-                    b_CancelOptimize.Hide();
-                    pB_Optimize.Hide();
-                    pB_Optimize.Value = 0;
+                    helmetStats = new SStats(weaponStats);
+                    helmetStats.Add(h.AllStats);
+                    SStats armorStats;
+                    foreach (Item a in items[ItemType.Armor])
+                    {
+                        armorStats = new SStats(helmetStats);
+                        armorStats.Add(a.AllStats);
+
+                        tasks.Add(Task.Run(() => calculate(w, h, a, items[ItemType.Necklace], items[ItemType.Ring], items[ItemType.Boots], hero, sHeroStats, optimizedFilterStats, setFocus
+                            , progress, armorStats, cb_Broken.Checked, tokenSource.Token, additionalAttackPercent), tokenSource.Token));
+
+                    }
                 }
-            
+            }
+            try
+            {
+                if (tasks.Count > 0)
+                {
+                    combinations = (await Task.WhenAll(tasks)).Aggregate((a, b) => { a.AddRange(b); return a; });
+                    if (limitResults && combinations.Count > limitResultsNum)
+                    {
+                        combinations = combinations.Take(limitResultsNum).ToList();
+                    }
+                }
+                b_CancelOptimize.Hide();
+                pB_Optimize.Hide();
+                pB_Optimize.Value = 0;
+                //Display the first page of results. Each page consists of 100 results
+                dgv_OptimizeResults.RowCount = Math.Min(100, combinations.Count);
+                optimizePage = combinations.Count > 0 ? 1 : 0;
+                l_Pages.Text = optimizePage + " / " + ((combinations.Count + 99) / 100);
+                if (limitResults && resultsCurrent >= limitResultsNum)
+                {
+                    MessageBox.Show("Maximum number of combinations reached. Please try to narrow the filter.", "Limit break", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                dgv_OptimizeResults.RowCount = Math.Min(100, combinations.Count);
+                optimizePage = 1;
+                l_Pages.Text = "1 / " + ((combinations.Count + 99) / 100);
+                b_CancelOptimize.Hide();
+                pB_Optimize.Hide();
+                pB_Optimize.Value = 0;
+            }
         }
 
         //Calculate all possible gear combinations and check whether they satisfy the given filters
@@ -1652,6 +1659,7 @@ namespace E7_Gear_Optimizer
                                                         float additonalAttackPercent)
         {
             List<(Item[], SStats)> combinations = new List<(Item[], SStats)>();
+            
             if (limitResults && Interlocked.Read(ref resultsCurrent) >= limitResultsNum)
             {
                 return combinations;
@@ -1661,19 +1669,25 @@ namespace E7_Gear_Optimizer
             setCounter[(int)helmet.Set]++;
             setCounter[(int)armor.Set]++;
             int count = 0;
+            SStats neckStats;
             foreach (Item n in necklaces)
             {
-                sItemStats.Add(n.AllStats);
+                neckStats = new SStats(sStats);
+                neckStats.Add(n.AllStats);
                 setCounter[(int)n.Set]++;
+                SStats ringStats;
                 foreach (Item r in rings)
                 {
-                    sItemStats.Add(r.AllStats);
+                    ringStats = new SStats(neckStats);
+                    ringStats.Add(r.AllStats);
                     setCounter[(int)r.Set]++;
+                    SStats currentStats;
                     foreach (Item b in boots)
                     {
+                        currentStats = new SStats(ringStats);
                         ct.ThrowIfCancellationRequested();
 
-                        sItemStats.Add(b.AllStats);
+                        currentStats.Add(b.AllStats);
                         setCounter[(int)b.Set]++;
 
                         List<Set> activeSets = Util.activeSet(setCounter);
@@ -1692,14 +1706,14 @@ namespace E7_Gear_Optimizer
                             SStats setBonusStats = hero.setBonusStats(activeSets);
                             SStats calculatedStats = new SStats();
                             //calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
-                            calculatedStats.ATK = (sStats.ATK * (1 + sItemStats.ATKPercent + setBonusStats.ATKPercent + additonalAttackPercent/100)) + sItemStats.ATK + hero.Artifact.SubStats[0].Value;
-                            calculatedStats.HP = (sStats.HP * (1 + sItemStats.HPPercent + setBonusStats.HPPercent)) + sItemStats.HP + hero.Artifact.SubStats[1].Value;
-                            calculatedStats.DEF = (sStats.DEF * (1 + sItemStats.DEFPercent + setBonusStats.DEFPercent)) + sItemStats.DEF;
-                            calculatedStats.SPD = (sStats.SPD * (1 + setBonusStats.SPD)) + sItemStats.SPD;
-                            calculatedStats.Crit = sStats.Crit + sItemStats.Crit + setBonusStats.Crit;
-                            calculatedStats.CritDmg = sStats.CritDmg + sItemStats.CritDmg + setBonusStats.CritDmg;
-                            calculatedStats.EFF = sStats.EFF + sItemStats.EFF + setBonusStats.EFF;
-                            calculatedStats.RES = sStats.RES + sItemStats.RES + setBonusStats.RES;
+                            calculatedStats.ATK = (currentStats.ATK * (1 + currentStats.ATKPercent + setBonusStats.ATKPercent + additonalAttackPercent/100)) + currentStats.ATK + hero.Artifact.SubStats[0].Value;
+                            calculatedStats.HP = (currentStats.HP * (1 + currentStats.HPPercent + setBonusStats.HPPercent)) + currentStats.HP + hero.Artifact.SubStats[1].Value;
+                            calculatedStats.DEF = (currentStats.DEF * (1 + currentStats.DEFPercent + setBonusStats.DEFPercent)) + currentStats.DEF;
+                            calculatedStats.SPD = (currentStats.SPD * (1 + currentStats.SPD)) + sItemStats.SPD;
+                            calculatedStats.Crit = currentStats.Crit + currentStats.Crit + setBonusStats.Crit;
+                            calculatedStats.CritDmg = currentStats.CritDmg + currentStats.CritDmg + setBonusStats.CritDmg;
+                            calculatedStats.EFF = currentStats.EFF + currentStats.EFF + setBonusStats.EFF;
+                            calculatedStats.RES = currentStats.RES + currentStats.RES + setBonusStats.RES;
                             valid = valid && checkFilter(calculatedStats, filter);
                             if (valid)
                             {
@@ -1712,13 +1726,10 @@ namespace E7_Gear_Optimizer
                             }
                         }
                         count++;
-                        sItemStats.Subtract(b.AllStats);
                         setCounter[(int)b.Set]--;
                     }
-                    sItemStats.Subtract(r.AllStats);
                     setCounter[(int)r.Set]--;
                 }
-                sItemStats.Subtract(n.AllStats);
                 setCounter[(int)n.Set]--;
             }
             progress.Report(count);
