@@ -127,11 +127,11 @@
     </Compile>
     <Compile Include="Skill.cs" />
     <Compile Include="SStats.cs" />
-    <Compile Include="updated.cs">
+    <Compile Include="Updated.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="updated.Designer.cs">
-      <DependentUpon>updated.cs</DependentUpon>
+    <Compile Include="Updated.Designer.cs">
+      <DependentUpon>Updated.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="Main.cs">
@@ -174,9 +174,12 @@
     <EmbeddedResource Include="SelectItemDialog.resx">
       <DependentUpon>SelectItemDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="updated.resx">
-      <DependentUpon>updated.cs</DependentUpon>
+    <EmbeddedResource Include="Updated.resx">
+      <DependentUpon>Updated.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="OCR\endure.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Data.datasource" />
     <None Include="Properties\Settings.settings">
@@ -323,6 +326,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\newEquipped.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OCR\bottom.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OCR\e7_ocr_gear_2200x1080.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OCR\top.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

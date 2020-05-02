@@ -392,7 +392,7 @@ namespace E7_Gear_Optimizer
 
         public List<Set> activeSets()
         {
-            return Util.activeSet(gear.Values.ToList());
+            return Util.ActiveSet(gear.Values.ToList());
         }
 
         public void unequip(Item item)
@@ -460,7 +460,7 @@ namespace E7_Gear_Optimizer
             {
                 try
                 {
-                    json = Util.client.DownloadString(Util.ApiUrl + "/hero/" + Util.toAPIUrl(Name));
+                    json = Util.client.DownloadString(Util.ApiUrl + "/hero/" + Util.ToAPIUrl(Name));
                     if (Properties.Settings.Default.UseCache)
                     {
                         File.WriteAllText(cacheFileName, json);

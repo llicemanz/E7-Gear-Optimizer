@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace E7_Gear_Optimizer
 {
-    public partial class updated : Form
+    public partial class Updated : Form
     {
-        public updated()
+        public Updated()
         {
             InitializeComponent();
         }
@@ -25,7 +18,7 @@ namespace E7_Gear_Optimizer
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void LinkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

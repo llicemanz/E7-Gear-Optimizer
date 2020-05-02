@@ -9,24 +9,21 @@ namespace E7_Gear_Optimizer
     public class Item
     {
         public string ID { get; }
-        private ItemType type;
-        private Set set;
-        private Grade grade;
+
         private int iLvl;
         private int enhance;
         private Stat main;
         private Stat[] subStats;
         public SStats AllStats { get; set; } = new SStats();
-        private float wss;
         public bool Locked { get; set; }
         public Hero Equipped { get; set; }
 
         public Item(string id, ItemType type, Set set, Grade grade, int iLvl, int enhance, Stat main, Stat[] subStats, Hero equipped, bool locked)
         {
             ID = id;
-            this.type = type;
-            this.set = set;
-            this.grade = grade;
+            Type = type;
+            Set = set;
+            Grade = grade;
             this.iLvl = iLvl;
             this.enhance = enhance;
             this.main = main;
@@ -37,15 +34,15 @@ namespace E7_Gear_Optimizer
             AllStats.SetStat(main);
             AllStats.SetStats(subStats);
 
-            calcWSS();
+            CalcWSS();
         }
 
         public Item() { }
 
 
-        public ItemType Type { get => type; set => type = value; }
-        public Set Set { get => set; set => set = value; }
-        public Grade Grade { get => grade; set => grade = value; }
+        public ItemType Type { get; set; }
+        public Set Set { get; set; }
+        public Grade Grade { get; set; }
         public int ILvl
         {
             get => iLvl;
@@ -87,13 +84,13 @@ namespace E7_Gear_Optimizer
             }
         }
 
-        public float WSS { get => wss; }
+        public float WSS { get; private set; }
 
         private const float wssMultiplier = 2f / 3f;
 
-        public void calcWSS()
+        public void CalcWSS()
         {
-            wss = 0;
+            WSS = 0;
             foreach (Stat s in subStats)
             {
                 switch (s.Name)
@@ -103,22 +100,38 @@ namespace E7_Gear_Optimizer
                     case Stats.HPPercent:
                     case Stats.EFF:
                     case Stats.RES:
-                        wss += 100 * s.Value / 48;
+                        WSS += 100 * s.Value / 48;
                         break;
                     case Stats.Crit:
-                        wss += 100 * s.Value / 30;
+                        WSS += 100 * s.Value / 30;
                         break;
                     case Stats.CritDmg:
-                        wss += 100 * s.Value / 42;
+                        WSS += 100 * s.Value / 42;
                         break;
                     case Stats.SPD:
-                        wss += s.Value / 24;
+                        WSS += s.Value / 24;
+                        break;
+                    case Stats.ATK:
+                        break;
+                    case Stats.HP:
+                        break;
+                    case Stats.DEF:
+                        break;
+                    case Stats.HPpS:
+                        break;
+                    case Stats.EHP:
+                        break;
+                    case Stats.EHPpS:
+                        break;
+                    case Stats.DMG:
+                        break;
+                    case Stats.DMGpS:
                         break;
                     default:
                         break;
                 }
             }
-            wss *= wssMultiplier;
+            WSS *= wssMultiplier;
         }
     }
 }

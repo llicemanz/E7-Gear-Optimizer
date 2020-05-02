@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace E7_Gear_Optimizer
 {
@@ -153,6 +149,18 @@ namespace E7_Gear_Optimizer
                 case Stats.RES:
                     RES = stat.Value;
                     break;
+                case Stats.HPpS:
+                    break;
+                case Stats.EHP:
+                    break;
+                case Stats.EHPpS:
+                    break;
+                case Stats.DMG:
+                    break;
+                case Stats.DMGpS:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -162,7 +170,7 @@ namespace E7_Gear_Optimizer
         /// <param name="stats"></param>
         public void SetStats(Stat[] stats)
         {
-            foreach (var stat in stats)
+            foreach (Stat stat in stats)
             {
                 SetStat(stat);
             }

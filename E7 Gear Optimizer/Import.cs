@@ -20,27 +20,30 @@ namespace E7_Gear_Optimizer
         public bool append = false;
         public int ItemsImported;
         public int HeroesImported;
+        public bool folder;
 
         public Import()
         {
             InitializeComponent();
         }
 
-        public Import(Data data, string fileName, bool web)
+        public Import(Data data, string fileName, bool web, bool folder)
         {
             InitializeComponent();
             this.data = data;
             this.fileName = fileName;
             this.web = web;
+            this.folder = folder;
         }
 
-        public Import(Data data, string fileName, bool web, bool append)
+        public Import(Data data, string fileName, bool web, bool append, bool folder)
         {
             InitializeComponent();
             this.data = data;
             this.fileName = fileName;
             this.web = web;
             this.append = append;
+            this.folder = folder;
         }
 
         private async void Import_Shown(object sender, EventArgs e)
@@ -49,11 +52,16 @@ namespace E7_Gear_Optimizer
             (bool, int, int) results;
             if (web)
             {
-                results = await Task.Run(() => data.importFromWeb(fileName, progress, append));
+                results = await Task.Run(() => data.ImportFromWeb(fileName, progress, append));
+            }
+            else if (folder)
+            {
+                await Task.Run(() => data.ImportFromOCR(fileName, progress));
+                results = await Task.Run(() => data.ImportFromWeb("OCR/endure.json", progress, append));
             }
             else
             {
-                results = await Task.Run(() => data.importFromThis(fileName, progress, append));
+                results = await Task.Run(() => data.ImportFromThis(fileName, progress, append));
             }
             result = results.Item1;
             HeroesImported = results.Item2;
