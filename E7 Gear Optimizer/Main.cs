@@ -1617,8 +1617,11 @@ namespace E7_Gear_Optimizer
                         armorStats = new SStats(helmetStats);
                         armorStats.Add(a.AllStats);
 
+                        //THis is needed as we pass by reference to calculate as a task that is async, so if we keep modifying by ref we mess up the original calculation.
+                        SStats tempStats = new SStats(armorStats);
+
                         tasks.Add(Task.Run(() => calculate(w, h, a, items[ItemType.Necklace], items[ItemType.Ring], items[ItemType.Boots], hero, sHeroStats, optimizedFilterStats, setFocus
-                            , progress, armorStats, cb_Broken.Checked, tokenSource.Token, additionalAttackPercent), tokenSource.Token));
+                            , progress, tempStats, cb_Broken.Checked, tokenSource.Token, additionalAttackPercent), tokenSource.Token));
 
                     }
                 }
@@ -1681,13 +1684,13 @@ namespace E7_Gear_Optimizer
             foreach (Item n in necklaces)
             {
                 neckStats = new SStats(sItemStats);
-                //neckStats.Add(n.AllStats);
+                neckStats.Add(n.AllStats);
                 setCounter[(int)n.Set]++;
                 SStats ringStats;
                 foreach (Item r in rings)
                 {
                     ringStats = new SStats(neckStats);
-                    //ringStats.Add(r.AllStats);
+                    ringStats.Add(r.AllStats);
                     setCounter[(int)r.Set]++;
                     SStats currentStats;
                     foreach (Item b in boots)
@@ -1696,7 +1699,7 @@ namespace E7_Gear_Optimizer
                         ct.ThrowIfCancellationRequested();
 
                         //currentStats.Add(b.AllStats);
-                        currentStats.AddAll(n.AllStats, r.AllStats, b.AllStats);
+                        currentStats.Add(b.AllStats);
                         setCounter[(int)b.Set]++;
 
                         List<Set> activeSets = Util.ActiveSet(setCounter);

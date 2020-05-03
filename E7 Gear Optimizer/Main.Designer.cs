@@ -147,6 +147,7 @@
             this.b_EditItem = new System.Windows.Forms.Button();
             this.b_NewItem = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.rb_import_ocr = new System.Windows.Forms.RadioButton();
             this.l_Status = new System.Windows.Forms.Label();
             this.l_ImportResults = new System.Windows.Forms.Label();
             this.b_ClearCache = new System.Windows.Forms.Button();
@@ -505,7 +506,6 @@
             this.sfd_export = new System.Windows.Forms.SaveFileDialog();
             this.tt_Skills = new System.Windows.Forms.ToolTip(this.components);
             this.tt_EquipUnlock = new System.Windows.Forms.ToolTip(this.components);
-            this.rb_import_ocr = new System.Windows.Forms.RadioButton();
             this.tb_Inventory.SuspendLayout();
             this.tc_InventorySets.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pb_ItemLocked)).BeginInit();
@@ -1906,6 +1906,18 @@
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // rb_import_ocr
+            // 
+            this.rb_import_ocr.AutoSize = true;
+            this.rb_import_ocr.Checked = true;
+            this.rb_import_ocr.Location = new System.Drawing.Point(80, 338);
+            this.rb_import_ocr.Name = "rb_import_ocr";
+            this.rb_import_ocr.Size = new System.Drawing.Size(103, 17);
+            this.rb_import_ocr.TabIndex = 14;
+            this.rb_import_ocr.TabStop = true;
+            this.rb_import_ocr.Text = "Import from OCR";
+            this.rb_import_ocr.UseVisualStyleBackColor = true;
+            // 
             // l_Status
             // 
             this.l_Status.AutoSize = true;
@@ -1997,7 +2009,6 @@
             // rb_import_this
             // 
             this.rb_import_this.AutoSize = true;
-            this.rb_import_this.Checked = false;
             this.rb_import_this.Location = new System.Drawing.Point(80, 361);
             this.rb_import_this.Name = "rb_import_this";
             this.rb_import_this.Size = new System.Drawing.Size(173, 17);
@@ -4125,7 +4136,7 @@
             // c_Sets_Results
             // 
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.NullValue = ((object)(resources.GetObject("dataGridViewCellStyle6.NullValue")));
+            dataGridViewCellStyle6.NullValue = null;
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.c_Sets_Results.DefaultCellStyle = dataGridViewCellStyle6;
             this.c_Sets_Results.HeaderText = "Sets";
@@ -5902,18 +5913,6 @@
             this.sfd_export.DefaultExt = "json";
             this.sfd_export.FileName = "E7 Gear Optimizer.json";
             this.sfd_export.Filter = "JSON|*.json";
-            // 
-            // rb_import_ocr
-            // 
-            this.rb_import_ocr.AutoSize = true;
-            this.rb_import_ocr.Checked = true;
-            this.rb_import_ocr.Location = new System.Drawing.Point(80, 338);
-            this.rb_import_ocr.Name = "rb_import_ocr";
-            this.rb_import_ocr.Size = new System.Drawing.Size(103, 17);
-            this.rb_import_ocr.TabIndex = 14;
-            this.rb_import_ocr.TabStop = true;
-            this.rb_import_ocr.Text = "Import from OCR";
-            this.rb_import_ocr.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
